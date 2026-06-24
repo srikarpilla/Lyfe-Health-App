@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPA Canada — Redesign Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F2A44;
+    --cream:#F7F4EC;
+    --paper:#FFFFFF;
+    --brass:#B8862B;
+    --brass-dark:#8F6A1E;
+    --forest:#2F4F3E;
+    --slate:#5B6770;
+    --rule:#D8D2C2;
+    --rule-strong:#0F2A44;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  img{max-width:100%;}
+  .skip-link{
+    position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;z-index:200;
+  }
+  .skip-link:focus{left:8px;top:8px;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:3px solid var(--brass);outline-offset:2px;}
+
+  /* ---------- Utility bar ---------- */
+  .util-bar{
+    background:var(--ink);color:#EDE7D8;font-size:13px;
+    display:flex;justify-content:flex-end;align-items:center;gap:18px;
+    padding:6px 24px;
+  }
+  .util-bar a{text-decoration:none;opacity:.9;display:flex;align-items:center;gap:6px;}
+  .util-bar a:hover{opacity:1;text-decoration:underline;}
+  .lang-toggle{font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;}
+
+  /* ---------- Header / Nav ---------- */
+  header.main{
+    background:var(--paper);
+    border-bottom:1px solid var(--rule);
+    position:sticky;top:0;z-index:100;
+  }
+  .nav-wrap{
+    max-width:1200px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;gap:28px;
+  }
+  .logo{
+    font-family:'Fraunces',serif;font-weight:700;font-size:22px;white-space:nowrap;
+    display:flex;align-items:baseline;gap:6px;
+  }
+  .logo .mark{color:var(--brass);}
+  nav.primary{display:flex;gap:6px;flex:1;}
+  nav.primary a{
+    text-decoration:none;color:var(--ink);font-weight:500;font-size:15px;
+    padding:10px 12px;border-bottom:2px solid transparent;
+  }
+  nav.primary a:hover{border-bottom-color:var(--brass);}
+  .search-mini{position:relative;min-width:240px;}
+  .search-mini input{
+    width:100%;padding:9px 36px 9px 12px;border:1px solid var(--rule);border-radius:var(--radius);
+    font-size:14px;background:var(--cream);
+  }
+  .search-mini svg{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--slate);}
+  .search-suggest{
+    position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--rule);
+    box-shadow:0 8px 20px rgba(15,42,68,.12);border-radius:var(--radius);overflow:hidden;z-index:50;display:none;
+  }
+  .search-suggest.show{display:block;}
+  .search-suggest button{
+    display:block;width:100%;text-align:left;background:none;border:none;padding:9px 12px;font-size:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  .search-suggest button:last-child{border-bottom:none;}
+  .search-suggest button:hover,.search-suggest button:focus{background:var(--cream);}
+  .burger{display:none;background:none;border:none;padding:6px;}
+  .burger svg{width:26px;height:26px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width:1200px;margin:0 auto;padding:56px 24px 40px;
+    display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--forest);display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .eyebrow::after{content:"";flex:0 0 60px;height:1px;background:var(--rule-strong);}
+  .hero h1{font-size:44px;line-height:1.08;margin-bottom:16px;}
+  .hero p.lede{font-size:17px;color:var(--slate);max-width:46ch;margin-bottom:26px;}
+
+  .audience-picker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+  .audience-picker button{
+    border:1px solid var(--rule-strong);background:transparent;color:var(--ink);
+    padding:8px 14px;border-radius:999px;font-size:13.5px;font-weight:500;
+  }
+  .audience-picker button.active{background:var(--ink);color:#fff;}
+  .audience-picker button:hover:not(.active){background:rgba(15,42,68,.06);}
+
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:10px;background:var(--brass);color:#fff;text-decoration:none;
+    padding:13px 22px;font-weight:600;font-size:15px;border-radius:var(--radius);border:none;
+  }
+  .hero-cta:hover{background:var(--brass-dark);}
+
+  .ledger-card{
+    background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius);
+    padding:26px;position:relative;
+  }
+  .ledger-card::before{
+    content:"";position:absolute;left:26px;right:26px;top:64px;height:2px;
+    background:repeating-linear-gradient(to right,var(--ink) 0,var(--ink) 6px,transparent 6px,transparent 10px);
+    opacity:.18;
+  }
+  .ledger-card h3{font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--slate);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px;}
+  .ledger-row{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--rule);}
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row .num{font-family:'Fraunces',serif;font-weight:600;font-size:26px;color:var(--ink);}
+  .ledger-row .lbl{font-size:13px;color:var(--slate);max-width:18ch;text-align:right;}
+  .ledger-note{font-size:11.5px;color:var(--slate);margin-top:14px;font-style:italic;}
+
+  /* ---------- Task grid ---------- */
+  section.tasks{max-width:1200px;margin:0 auto;padding:8px 24px 50px;}
+  .tasks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .task-tile{
+    background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius);padding:22px 18px;
+    text-decoration:none;color:var(--ink);display:block;transition:transform .15s ease,border-color .15s ease;
+  }
+  .task-tile:hover{border-color:var(--brass);transform:translateY(-2px);}
+  .task-tile .tnum{font-family:'IBM Plex Mono',monospace;color:var(--brass);font-size:13px;margin-bottom:10px;display:block;}
+  .task-tile h3{font-size:17px;margin-bottom:6px;}
+  .task-tile p{font-size:13.5px;color:var(--slate);margin:0;}
+
+  /* ---------- Personalized rail ---------- */
+  section.rail{max-width:1200px;margin:0 auto;padding:0 24px 56px;}
+  .rail-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;border-bottom:2px solid var(--ink);padding-bottom:10px;}
+  .rail-head h2{font-size:24px;}
+  .rail-head span{font-size:13px;color:var(--slate);font-family:'IBM Plex Mono',monospace;}
+  .rail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .rail-card{background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius);padding:20px;}
+  .rail-card .tag{font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--forest);}
+  .rail-card h3{font-size:16.5px;margin:8px 0 6px;}
+  .rail-card p{font-size:13.5px;color:var(--slate);margin:0 0 12px;}
+  .rail-card a{font-size:13.5px;font-weight:600;color:var(--brass-dark);text-decoration:none;}
+  .rail-card a:hover{text-decoration:underline;}
+
+  /* ---------- News (de-emphasized) ---------- */
+  section.news{max-width:1200px;margin:0 auto;padding:0 24px 64px;}
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .news-card{border-top:3px solid var(--rule-strong);padding-top:12px;}
+  .news-card .date{font-size:11.5px;color:var(--slate);font-family:'IBM Plex Mono',monospace;}
+  .news-card h3{font-size:15.5px;margin:6px 0;line-height:1.3;}
+  .news-card p{font-size:13px;color:var(--slate);margin:0;}
+
+  footer{background:var(--ink);color:#cfd6df;padding:40px 24px;font-size:13.5px;}
+  .footer-wrap{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  footer a{color:#cfd6df;text-decoration:none;opacity:.85;}
+  footer a:hover{opacity:1;text-decoration:underline;}
+
+  /* ---------- AI assistant widget ---------- */
+  .ai-fab{
+    position:fixed;bottom:22px;right:22px;width:56px;height:56px;border-radius:50%;
+    background:var(--ink);color:#fff;border:none;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 20px rgba(15,42,68,.35);z-index:300;
+  }
+  .ai-fab:hover{background:var(--brass-dark);}
+  .ai-fab svg{width:24px;height:24px;}
+  .ai-panel{
+    position:fixed;bottom:90px;right:22px;width:340px;max-height:480px;background:#fff;
+    border:1px solid var(--rule);border-radius:6px;box-shadow:0 16px 40px rgba(15,42,68,.25);
+    display:none;flex-direction:column;overflow:hidden;z-index:300;
+  }
+  .ai-panel.open{display:flex;}
+  .ai-head{background:var(--ink);color:#fff;padding:12px 14px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;}
+  .ai-head strong{font-family:'Fraunces',serif;font-weight:600;}
+  .ai-head button{background:none;border:none;color:#fff;font-size:16px;line-height:1;}
+  .ai-tagline{font-size:10.5px;color:#EDE7D8;opacity:.8;padding:0 14px 8px;background:var(--ink);}
+  .ai-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;background:var(--cream);}
+  .msg{padding:9px 11px;border-radius:8px;max-width:85%;line-height:1.4;}
+  .msg.user{align-self:flex-end;background:var(--brass);color:#fff;}
+  .msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--rule);}
+  .ai-input{display:flex;border-top:1px solid var(--rule);}
+  .ai-input input{flex:1;border:none;padding:11px 12px;font-size:13.5px;font-family:inherit;}
+  .ai-input input:focus{outline:none;}
+  .ai-input button{background:var(--brass);border:none;color:#fff;padding:0 16px;font-weight:600;}
+  .ai-input button:hover{background:var(--brass-dark);}
+  .typing{font-size:12px;color:var(--slate);font-style:italic;align-self:flex-start;}
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr;padding-top:32px;}
+    .hero h1{font-size:32px;}
+    .tasks-grid{grid-template-columns:repeat(2,1fr);}
+    .rail-grid,.news-grid{grid-template-columns:1fr;}
+    nav.primary{display:none;}
+    .search-mini{display:none;}
+    .burger{display:block;margin-left:auto;}
+    .ai-panel{width:92vw;right:4vw;}
+  }
+  nav.primary.mobile-open{
+    display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#fff;
+    border-top:1px solid var(--rule);padding:8px 16px 16px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .task-tile{transition:none;}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="util-bar">
+  <a href="#" class="lang-toggle">FR</a>
+  <a href="#find-a-cpa">Find a CPA</a>
+  <a href="#login">Member login</a>
+</div>
+
+<header class="main">
+  <div class="nav-wrap">
+    <div class="logo"><span class="mark">CPA</span> Canada</div>
+    <nav class="primary" id="primaryNav">
+      <a href="#become">Become a CPA</a>
+      <a href="#members">Members</a>
+      <a href="#public">Public &amp; business</a>
+      <a href="#pd">Resources &amp; PD</a>
+      <a href="#about">About us</a>
+    </nav>
+    <div class="search-mini">
+      <input type="text" id="siteSearch" placeholder="Search tasks, guidance, news…" autocomplete="off" aria-label="Site search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <div class="search-suggest" id="searchSuggest"></div>
+    </div>
+    <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Canada's national accounting body</div>
+      <h1 id="heroHeadline">One profession. Every stage of your career.</h1>
+      <p class="lede" id="heroLede">Whether you're exploring the CPA designation or guiding a firm through year-end, find the right next step in one place.</p>
+
+      <div class="audience-picker" role="group" aria-label="Personalize this page">
+        <button class="active" data-aud="public">I'm the public</button>
+        <button data-aud="student">I'm a CPA student</button>
+        <button data-aud="member">I'm a CPA</button>
+        <button data-aud="firm">I run a firm</button>
+      </div>
+
+      <a class="hero-cta" id="heroCta" href="#find-a-cpa">
+        Find a CPA near you
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="ledger-card">
+      <h3>The profession, at a glance</h3>
+      <div class="ledger-row"><span class="num">217,000+</span><span class="lbl">CPAs across Canada</span></div>
+      <div class="ledger-row"><span class="num">14</span><span class="lbl">provincial &amp; territorial bodies, one designation</span></div>
+      <div class="ledger-row"><span class="num">3</span><span class="lbl">legacy designations unified under CPA</span></div>
+      <p class="ledger-note">Illustrative figures for prototype purposes — replace with live data on launch.</p>
+    </div>
+  </section>
+
+  <section class="tasks" aria-label="Top tasks">
+    <div class="tasks-grid">
+      <a class="task-tile" href="#become"><span class="tnum">01</span><h3>Become a CPA</h3><p>Education paths, the CFE and provincial requirements.</p></a>
+      <a class="task-tile" href="#renew"><span class="tnum">02</span><h3>Renew your membership</h3><p>Dues, CPD reporting and good-standing status.</p></a>
+      <a class="task-tile" href="#find-a-cpa"><span class="tnum">03</span><h3>Find a CPA</h3><p>Search verified members by name, city or specialty.</p></a>
+      <a class="task-tile" href="#login"><span class="tnum">04</span><h3>Member portal login</h3><p>Courses, benefits and your CPA profile.</p></a>
+    </div>
+  </section>
+
+  <section class="rail" aria-live="polite">
+    <div class="rail-head">
+      <h2 id="railTitle">Recommended for the public</h2>
+      <span class="mono">Updates as you change the picker above ↑</span>
+    </div>
+    <div class="rail-grid" id="railGrid"></div>
+  </section>
+
+  <section class="news">
+    <div class="rail-head"><h2>From CPA Canada</h2></div>
+    <div class="news-grid">
+      <div class="news-card"><div class="date">JUN 2026</div><h3>Member engagement sessions: what we heard from 12,000+ CPAs</h3><p>A recap of the national consultation on the future of the profession.</p></div>
+      <div class="news-card"><div class="date">JUN 2026</div><h3>Household debt survey: confidence remains fragile</h3><p>New research on how Canadians are managing rising costs.</p></div>
+      <div class="news-card"><div class="date">MAY 2026</div><h3>Member benefits refreshed for the year ahead</h3><p>A look at savings, insurance and professional development perks.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-wrap">
+    <div><strong style="font-family:'Fraunces',serif;font-size:18px;">CPA Canada</strong><br><span style="opacity:.7;">Prototype redesign — not the live site.</span></div>
+    <div><a href="#about">About</a></div>
+    <div><a href="#pd">Resources &amp; PD</a></div>
+    <div><a href="#login">Member login</a></div>
+  </div>
+</footer>
+
+<button class="ai-fab" id="aiFab" aria-label="Open CPA Canada guide assistant">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div class="ai-panel" id="aiPanel" role="dialog" aria-label="CPA Canada guide assistant">
+  <div class="ai-head">
+    <strong>CPA Canada Guide</strong>
+    <button id="aiClose" aria-label="Close assistant">✕</button>
+  </div>
+  <div class="ai-tagline">Prototype demo — answers may be incomplete</div>
+  <div class="ai-msgs" id="aiMsgs">
+    <div class="msg bot">Hi — I'm a demo guide built for this redesign. Ask me about becoming a CPA, renewing membership, PD courses or finding a CPA, and I'll point you in the right direction.</div>
+  </div>
+  <form class="ai-input" id="aiForm">
+    <input type="text" id="aiInput" placeholder="Ask a question…" aria-label="Ask the CPA Canada guide">
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<script>
+  // ---------- Mobile nav ----------
+  const burger = document.getElementById('burgerBtn');
+  const primaryNav = document.getElementById('primaryNav');
+  burger.addEventListener('click', () => {
+    const open = primaryNav.classList.toggle('mobile-open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  // ---------- Search suggestions ----------
+  const tasksIndex = [
+    "Become a CPA — education paths",
+    "CFE exam dates and deadlines",
+    "Renew my membership",
+    "Continuing professional development (CPD) requirements",
+    "Find a CPA near me",
+    "Member login / member portal",
+    "Public accounting licensing",
+    "CPA Canada Handbook",
+    "Member benefits and discounts",
+    "International credential recognition"
+  ];
+  const searchInput = document.getElementById('siteSearch');
+  const suggestBox = document.getElementById('searchSuggest');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if(!q){ suggestBox.classList.remove('show'); suggestBox.innerHTML=''; return; }
+    const matches = tasksIndex.filter(t => t.toLowerCase().includes(q)).slice(0,6);
+    suggestBox.innerHTML = matches.map(m => `<button type="button">${m}</button>`).join('');
+    suggestBox.classList.toggle('show', matches.length > 0);
+  });
+  suggestBox.addEventListener('click', (e) => {
+    if(e.target.tagName === 'BUTTON'){
+      searchInput.value = e.target.textContent;
+      suggestBox.classList.remove('show');
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('.search-mini')) suggestBox.classList.remove('show');
+  });
+
+  // ---------- Audience personalization ----------
+  const content = {
+    public: {
+      headline: "One profession. Every stage of your career.",
+      lede: "Whether you're exploring the CPA designation or guiding a firm through year-end, find the right next step in one place.",
+      ctaText: "Find a CPA near you", ctaHref:"#find-a-cpa",
+      railTitle: "Recommended for the public",
+      cards: [
+        {tag:"Hire with confidence", title:"Find a verified CPA", body:"Search by name, city or specialty and confirm good standing.", link:"Search the directory →"},
+        {tag:"Money matters", title:"Household debt &amp; budgeting research", body:"Plain-language findings from our latest national survey.", link:"Read the survey →"},
+        {tag:"Consumer protection", title:"How to file a complaint", body:"Steps for raising a concern about a CPA's conduct.", link:"Start a complaint →"}
+      ]
+    },
+    student: {
+      headline: "Your path to the CPA designation, mapped out.",
+      lede: "From prerequisite education to the Common Final Examination, see exactly what's next and when.",
+      ctaText: "Check my eligibility", ctaHref:"#become",
+      railTitle: "Recommended for CPA students",
+      cards: [
+        {tag:"Next milestone", title:"CFE registration &amp; key dates", body:"Deadlines, format changes and study supports for this cycle.", link:"View exam dates →"},
+        {tag:"Education", title:"PEP module sequencing", body:"Plan your module order around work and life commitments.", link:"Plan my modules →"},
+        {tag:"Funding", title:"Bursaries and financial support", body:"Awards available to students completing the CPA program.", link:"See funding options →"}
+      ]
+    },
+    member: {
+      headline: "Stay current. Stay in good standing.",
+      lede: "Track your CPD hours, renew your dues and pull up the benefits you're already paying for.",
+      ctaText: "Go to my member profile", ctaHref:"#login",
+      railTitle: "Recommended for CPA members",
+      cards: [
+        {tag:"Due soon", title:"CPD hours tracker", body:"See your reported hours for this cycle at a glance.", link:"Log my hours →"},
+        {tag:"Save", title:"Member benefits refresh", body:"Updated insurance, travel and software discounts for this year.", link:"Browse benefits →"},
+        {tag:"Grow", title:"Specialized credential pathways", body:"Add a recognized specialization to your designation.", link:"Compare pathways →"}
+      ]
+    },
+    firm: {
+      headline: "Resources built for the realities of practice.",
+      lede: "Standards updates, staffing guidance and tools to help your firm navigate a tight talent market.",
+      ctaText: "Browse firm resources", ctaHref:"#pd",
+      railTitle: "Recommended for firms",
+      cards: [
+        {tag:"Standards", title:"Assurance &amp; accounting updates", body:"What changed this quarter and how it affects your engagements.", link:"Read the briefing →"},
+        {tag:"Talent", title:"Hiring &amp; retention guidance", body:"Practical approaches to the current public-practice talent gap.", link:"Get the guidance →"},
+        {tag:"Risk", title:"Practice management toolkit", body:"Templates for engagement letters, quality control and more.", link:"Open the toolkit →"}
+      ]
+    }
+  };
+
+  const heroHeadline = document.getElementById('heroHeadline');
+  const heroLede = document.getElementById('heroLede');
+  const heroCta = document.getElementById('heroCta');
+  const railTitle = document.getElementById('railTitle');
+  const railGrid = document.getElementById('railGrid');
+  const pickerBtns = document.querySelectorAll('.audience-picker button');
+
+  function renderAudience(key){
+    const c = content[key];
+    heroHeadline.textContent = c.headline;
+    heroLede.textContent = c.lede;
+    heroCta.childNodes[0].nodeValue = c.ctaText + ' ';
+    heroCta.setAttribute('href', c.ctaHref);
+    railTitle.textContent = c.railTitle;
+    railGrid.innerHTML = c.cards.map(card => `
+      <div class="rail-card">
+        <span class="tag">${card.tag}</span>
+        <h3>${card.title}</h3>
+        <p>${card.body}</p>
+        <a href="#">${card.link}</a>
+      </div>
+    `).join('');
+  }
+  pickerBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pickerBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderAudience(btn.dataset.aud);
+    });
+  });
+  renderAudience('public');
+
+  // ---------- AI assistant widget ----------
+  const aiFab = document.getElementById('aiFab');
+  const aiPanel = document.getElementById('aiPanel');
+  const aiClose = document.getElementById('aiClose');
+  const aiForm = document.getElementById('aiForm');
+  const aiInput = document.getElementById('aiInput');
+  const aiMsgs = document.getElementById('aiMsgs');
+  let aiHistory = [];
+
+  aiFab.addEventListener('click', () => { aiPanel.classList.add('open'); aiInput.focus(); });
+  aiClose.addEventListener('click', () => aiPanel.classList.remove('open'));
+
+  function addMsg(text, who){
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.textContent = text;
+    aiMsgs.appendChild(div);
+    aiMsgs.scrollTop = aiMsgs.scrollHeight;
+  }
+
+  aiForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = aiInput.value.trim();
+    if(!q) return;
+    addMsg(q, 'user');
+    aiHistory.push({role:'user', content:q});
+    aiInput.value = '';
+
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.textContent = 'Guide is thinking…';
+    aiMsgs.appendChild(typing);
+    aiMsgs.scrollTop = aiMsgs.scrollHeight;
+
+    try{
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: "You are a friendly, concise demo assistant embedded in a REDESIGN PROTOTYPE of the CPA Canada website (cpacanada.ca). Help visitors find their way around topics like: becoming a CPA, the CFE exam, membership renewal, CPD requirements, finding a CPA, member benefits, and resources for firms. Answer in at most 4 short sentences, in plain language. Be clear this is a prototype demo and that for binding deadlines, fees or official requirements the visitor should confirm on the real cpacanada.ca or with their provincial CPA body.",
+          messages: aiHistory
+        })
+      });
+      const data = await response.json();
+      typing.remove();
+      const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+      const reply = textBlocks.join('\n').trim() || "Sorry, I couldn't generate a response just now — please try again.";
+      addMsg(reply, 'bot');
+      aiHistory.push({role:'assistant', content:reply});
+    }catch(err){
+      typing.remove();
+      addMsg("I'm having trouble reaching the assistant right now. This is a prototype demo, so live connectivity may be limited.", 'bot');
+    }
+  });
+</script>
+</body>
+</html>
