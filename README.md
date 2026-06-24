@@ -1,6 +1,6 @@
 # CPA Canada Website Redesign — Prototype
 
-**Live demo:** 
+**Live demo:** https://srikarpilla.github.io/Lyfe-Health-App/
 
 ## Features
 - Audience segmentation (Public / Student / Member / Firm)
